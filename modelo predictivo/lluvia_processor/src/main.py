@@ -293,7 +293,7 @@ class LluviaProcessor:
                     fecha_max = pd.to_datetime(df_raw['fechaobservacion']).max()
                     fecha_max_str = fecha_max.strftime('%Y-%m-%d')
 
-                    raw_backup = self.output_path / f'RAW_lluvia_backup_{fecha_max_str}.csv.gz'
+                    raw_backup = self.output_path / 'RAW_lluvia_backup_latest.csv.gz'
                     self.output_path.mkdir(parents=True, exist_ok=True)
                     df_raw.to_csv(raw_backup, compression='gzip', index=False)
                     logger.info(f"Respaldo guardado: {raw_backup}")
@@ -315,10 +315,7 @@ class LluviaProcessor:
                         logger.info("Guardando datos raw como respaldo...")
                         try:
                             df_raw = pd.DataFrame.from_records(all_data)
-                            fecha_max = pd.to_datetime(df_raw['fechaobservacion']).max()
-                            fecha_max_str = fecha_max.strftime('%Y-%m-%d')
-
-                            raw_backup = self.output_path / f'RAW_lluvia_backup_{fecha_max_str}.csv.gz'
+                            raw_backup = self.output_path / 'RAW_lluvia_backup_latest.csv.gz'
                             self.output_path.mkdir(parents=True, exist_ok=True)
                             df_raw.to_csv(raw_backup, compression='gzip', index=False)
                             logger.info(f"Respaldo guardado: {raw_backup}")
@@ -713,30 +710,20 @@ class LluviaProcessor:
             # Crear directorio de salida si no existe
             self.output_path.mkdir(parents=True, exist_ok=True)
 
-            # Previo a exportar dataframe, guardar fecha para incluir en la ruta de archivo
-            # Obtener la fecha de daily rain del df resultados
-            fecha_df = df_resultados['data'].iloc[0]
+            # Solo guardamos el archivo latest, sobrescribiendo el anterior
+            archivo_ultimo = self.output_path / 'lluvia_procesada_latest.csv'
+            df_resultados.to_csv(archivo_ultimo, index=False, encoding='utf-8-sig')
+            logger.info(f"Último resultado guardado en: {archivo_ultimo}")
 
-            # Convertir fecha a str para usarla en el archivo para guardar
+            # Crear resumen JSON
+            columnas_lluvia = [col for col in df_resultados.columns if 'rain' in col]
+
+            # Obtener la fecha de la primera fila para el resumen
+            fecha_df = df_resultados['data'].iloc[0]
             if isinstance(fecha_df, str):
                 fecha_str = pd.to_datetime(fecha_df).strftime('%Y-%m-%d')
             else:
                 fecha_str = fecha_df.strftime('%Y-%m-%d')
-
-            # Construir la ruta completa del archivo
-            archivo_salida = self.output_path / f'lluvia_30d_{fecha_str}.csv'
-
-            # Exportar dataframe para formato de modelo
-            df_resultados.to_csv(archivo_salida, index=False, encoding='utf-8-sig')
-            logger.info(f"Resultados guardados en: {archivo_salida}")
-
-            # También guardar con nombre fijo para uso posterior (latest)
-            archivo_ultimo = self.output_path / 'lluvia_procesada_latest.csv'
-            df_resultados.to_csv(archivo_ultimo, index=False, encoding='utf-8-sig')
-            logger.info(f"Último resultado en: {archivo_ultimo}")
-
-            # Crear resumen JSON
-            columnas_lluvia = [col for col in df_resultados.columns if 'rain' in col]
 
             resumen = {
                 'fecha_datos': fecha_str,
