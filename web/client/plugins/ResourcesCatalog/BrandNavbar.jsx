@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { createPlugin } from "../../utils/PluginsUtils";
 import FlexBox from '../../components/layout/FlexBox';
 import Menu from './components/Menu';
+import Message from '../../components/I18N/Message';
 import usePluginItems from '../../hooks/usePluginItems';
 import Button from '../../components/layout/Button';
 import tooltip from '../../components/misc/enhancers/tooltip';
@@ -263,7 +264,7 @@ BrandNavbar.defaultProps = {
     leftMenuItems: [
         {
             type: 'link',
-            labelId: 'Datos Climatológicos',
+            labelId: <Message msgId="Rutas.statistics" defaultMessage="Datos Climatológicos" />,
             glyph: 'signal',
             href: '#/statistics'
 

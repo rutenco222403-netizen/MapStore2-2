@@ -402,6 +402,9 @@
       "scrollTop": "Scroll to the top of the page",
       "footerCustomHTML": "<div><p>Please insert custom HTML into the translations to render a custom footer</p></div>"
     },
+    "Rutas":{
+      "statistics": "Climatological Data"
+    },
     "cookiesPolicyNotification": {
       "title": "This website uses cookies",
       "message": "By continuing to use our website you are accepting our use of cookies.",

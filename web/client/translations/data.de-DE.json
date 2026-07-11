@@ -440,6 +440,9 @@
         }
       }
     },
+    "Rutas":{
+      "statistics": "Klimatologische Daten"
+    },
     "cookiesPolicyNotification": {
       "title": "Diese Webseite verwendet Cookies",
       "message": "Wenn Sie unsere Website weiterhin nutzen, akzeptieren Sie die Verwendung von Cookies.",
