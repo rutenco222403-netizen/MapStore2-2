@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Message from '../../components/I18N/Message';
 import {
     ResponsiveContainer,
     LineChart,
@@ -46,9 +47,9 @@ function Stats({ data }) {
     const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
     return (
         <div className="sc-stats">
-            <span className="sc-stats__item"><em>Mín</em>{min}</span>
-            <span className="sc-stats__item"><em>Prom</em>{avg}</span>
-            <span className="sc-stats__item"><em>Máx</em>{max}</span>
+            <span className="sc-stats__item"><em className="sc-stats__label"><Message msgId="Statistics.min" defaultMessage="Mín" /></em>{min}</span>
+            <span className="sc-stats__item"><em className="sc-stats__label"><Message msgId="Statistics.avg" defaultMessage="Prom" /></em>{avg}</span>
+            <span className="sc-stats__item"><em className="sc-stats__label"><Message msgId="Statistics.max" defaultMessage="Máx" /></em>{max}</span>
         </div>
     );
 }
@@ -89,7 +90,9 @@ function SensorChart({ sensor, period, zone, station }) {
                 <span className="sc-card__indicator" style={{ background: sensor.color }} />
                 <div>
                     <h3 className="sc-card__title">{sensor.name}</h3>
-                    <p className="sc-card__subtitle">Sensor {sensor.id} · {sensor.unit}</p>
+                    <p className="sc-card__subtitle">
+                        <Message msgId="Statistics.sensorInfo" defaultMessage="Sensor" /> {sensor.id} · {sensor.unit}
+                    </p>
                 </div>
             </div>
 
@@ -98,7 +101,9 @@ function SensorChart({ sensor, period, zone, station }) {
                     <Stats data={data} />
                     <div className="sc-card__chart">
                         {data.length === 0 ? (
-                            <p className="sc-card__empty">Sin datos para este período</p>
+                            <p className="sc-card__empty">
+                                <Message msgId="Statistics.noDataPeriod" defaultMessage="Sin datos para este período" />
+                            </p>
                         ) : (
                             <ResponsiveContainer width="100%" height={200}>
                                 <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>

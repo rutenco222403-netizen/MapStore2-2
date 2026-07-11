@@ -418,6 +418,25 @@
     "Rutas":{
       "statistics": "Datos Climatológicos"
     },
+    "Statistics": {
+      "title": "Monitoreo de Sensores",
+      "subtitle": "Datos en tiempo real de la red de sensores ambientales",
+      "emptyTitle": "No hay datos disponibles",
+      "emptyText": "La API no devolvió estaciones, sensores o lecturas para la selección actual.",
+      "periodLabel": "Período:",
+      "period.24h": "Últimas 24h",
+      "period.7d": "Últimos 7 días",
+      "period.30d": "Últimos 30 días",
+      "period.90d": "Últimos 90 días",
+      "sensorInfo": "Sensor",
+      "noDataPeriod": "Sin datos para este período",
+      "min": "Mín",
+      "avg": "Prom",
+      "max": "Máx",
+      "sensorsLabel": "Sensores:",
+      "zoneLabel": "Zona:",
+      "stationLabel": "Estación:"
+    },
     "cookiesPolicyNotification": {
       "title": "Este sitio usa cookies",
       "message": "Si sigue usando este sitio, asumimos que acepta el uso de cookies.",

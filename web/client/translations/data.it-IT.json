@@ -405,6 +405,25 @@
     "Rutas":{
       "statistics": "Dati climatologici"
     },
+    "Statistics": {
+      "title": "Monitoraggio Sensori",
+      "subtitle": "Dati in tempo reale della rete di sensori ambientali",
+      "emptyTitle": "Nessun dato disponibile",
+      "emptyText": "L'API non ha restituito stazioni, sensori o letture per la selezione corrente.",
+      "periodLabel": "Periodo:",
+      "period.24h": "Ultime 24 ore",
+      "period.7d": "Ultimi 7 giorni",
+      "period.30d": "Ultimi 30 giorni",
+      "period.90d": "Ultimi 90 giorni",
+      "sensorInfo": "Sensore",
+      "noDataPeriod": "Nessun dato per questo periodo",
+      "min": "Min",
+      "avg": "Prom",
+      "max": "Max",
+      "sensorsLabel": "Sensori:",
+      "zoneLabel": "Zona:",
+      "stationLabel": "Stazione:"
+    },
     "cookiesPolicyNotification": {
       "title": "Questo sito utilizza cookies",
       "message": "Continuando a navigare sul sito acconsenti all'uso dei cookie",

@@ -5,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import Message from '../../components/I18N/Message';
 
 function SensorSelector({ active, onChange, sensors }) {
     const list = sensors || [];
@@ -21,7 +22,9 @@ function SensorSelector({ active, onChange, sensors }) {
 
     return (
         <div className="sc-sensor-selector">
-            <span className="sc-sensor-selector__label">Sensores:</span>
+            <span className="sc-sensor-selector__label">
+                <Message msgId="Statistics.sensorsLabel" defaultMessage="Sensores:" />
+            </span>
             <div className="sc-sensor-selector__chips">
                 {list.map(s => (
                     <button

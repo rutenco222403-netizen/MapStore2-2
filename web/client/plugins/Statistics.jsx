@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPlugin } from '../utils/PluginsUtils';
+import Message from '../components/I18N/Message';
 import SensorChart from './statistics/SensorChart';
 import PeriodFilter from './statistics/PeriodFilter';
 import LocationFilter from './statistics/LocationFilter';
@@ -80,9 +81,11 @@ function StatisticsContent() {
 
                 {/* Cabecera */}
                 <div className="sc-dashboard__header">
-                    <h1 className="sc-dashboard__title">Monitoreo de Sensores</h1>
+                    <h1 className="sc-dashboard__title">
+                        <Message msgId="Statistics.title" defaultMessage="Monitoreo de Sensores" />
+                    </h1>
                     <p className="sc-dashboard__subtitle">
-                        Datos en tiempo real de la red de sensores ambientales
+                        <Message msgId="Statistics.subtitle" defaultMessage="Datos en tiempo real de la red de sensores ambientales" />
                     </p>
                 </div>
 
@@ -103,9 +106,11 @@ function StatisticsContent() {
                 {/* Grid de gráficas */}
                 {sensors.length === 0 ? (
                     <div className="sc-dashboard__empty">
-                        <h2 className="sc-dashboard__empty-title">No hay datos disponibles</h2>
+                        <h2 className="sc-dashboard__empty-title">
+                            <Message msgId="Statistics.emptyTitle" defaultMessage="No hay datos disponibles" />
+                        </h2>
                         <p className="sc-dashboard__empty-text">
-                            La API no devolvió estaciones, sensores o lecturas para la selección actual.
+                            <Message msgId="Statistics.emptyText" defaultMessage="La API no devolvió estaciones, sensores o lecturas para la selección actual." />
                         </p>
                     </div>
                 ) : (
