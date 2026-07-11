@@ -415,6 +415,9 @@
       "title": "Amanecer",
       "description": "Explora el mundo en 3D"
     },
+    "Rutas":{
+      "statistics": "Datos Climatológicos"
+    },
     "cookiesPolicyNotification": {
       "title": "Este sitio usa cookies",
       "message": "Si sigue usando este sitio, asumimos que acepta el uso de cookies.",

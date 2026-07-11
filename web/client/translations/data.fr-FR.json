@@ -402,6 +402,9 @@
       "scrollTop": "Retour en haut de la page",
       "footerCustomHTML": "<div><p>Veuillez insérer du HTML personnalisé dans les traductions pour afficher un pied de page personnalisé</p></div>"
     },
+    "Rutas":{
+      "statistics": "Données climatologiques"
+    },
     "cookiesPolicyNotification": {
       "title": "Ce site utilise des cookies",
       "message": "En continuant sur notre site Web, vous acceptez l'utilisation de cookies.",

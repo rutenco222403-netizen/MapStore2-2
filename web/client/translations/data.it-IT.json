@@ -402,6 +402,9 @@
       "scrollTop": "Torna all'inizio della pagina",
       "footerCustomHTML": "<div><p>Per favore, inserisci un HTML custom nelle traduzioni per renderizzare un footer personalizzato</p></div>"
     },
+    "Rutas":{
+      "statistics": "Dati climatologici"
+    },
     "cookiesPolicyNotification": {
       "title": "Questo sito utilizza cookies",
       "message": "Continuando a navigare sul sito acconsenti all'uso dei cookie",
