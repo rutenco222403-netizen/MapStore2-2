@@ -37,7 +37,7 @@ logger = setup_logging()
 class LluviaProcessor:
     def __init__(self):
         # Usar API de datos.gov.co como en el notebook
-        self.app_token = os.getenv('IDEAM_TOKEN')
+        self.app_token = os.getenv('IDEAM_API_TOKEN')
         self.dataset_identifier = "s54a-sgyg"  # Dataset específico del notebook
 
         self.input_path = Path('/app/data/input')  # Archivos shapefile compartidos
@@ -51,7 +51,10 @@ class LluviaProcessor:
         self.client = Socrata("www.datos.gov.co", self.app_token, timeout=30)
 
         logger.info("LluviaProcessor inicializado con API Socrata")
-        logger.info(f"Token: {self.app_token[:10]}...")
+        if self.app_token:
+            logger.info(f"Token: {self.app_token[:10]}...")
+        else:
+            logger.warning("IDEAM API Token no configurado")
         logger.info(f"Dataset: {self.dataset_identifier}")
         logger.info(f"Ruta entrada: {self.input_path}")
         logger.info(f"Ruta salida: {self.output_path}")
@@ -786,7 +789,7 @@ def main():
         return 0
 
     except Exception as e:
-        logger.error(f"Error fatal en procesamiento: {e}")
+        logger.error("Error fatal", exc_info=True)
         return 1
 
 if __name__ == "__main__":
