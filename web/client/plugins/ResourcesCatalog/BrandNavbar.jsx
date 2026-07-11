@@ -162,7 +162,7 @@ function BrandNavbar({ size, variant, leftMenuItems, rightMenuItems, items, logo
                 )}
 
                 {/* Menú hamburguesa (mobile) */}
-                {isMobile && dropdownMenuItems.length > 0 && (
+                {isMobile && (dropdownMenuItems.length > 0 || otherLeftMenuItems.length > 0) && (
                     <button
                         className="ms-menu-link ms-menu-hamburger-btn"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -214,7 +214,7 @@ function BrandNavbar({ size, variant, leftMenuItems, rightMenuItems, items, logo
                 </div>
 
                 {/* Mobile overlay + dropdown panel */}
-                {isMobile && mobileMenuOpen && dropdownMenuItems.length > 0 && (
+                {isMobile && mobileMenuOpen && (dropdownMenuItems.length > 0 || otherLeftMenuItems.length > 0) && (
                     <>
                         <div
                             className="ms-mobile-dropdown-overlay"
@@ -223,6 +223,17 @@ function BrandNavbar({ size, variant, leftMenuItems, rightMenuItems, items, logo
                             aria-label="Cerrar menú"
                         />
                         <div id="ms-mobile-dropdown" className="ms-mobile-dropdown-menu" role="dialog" aria-modal="true">
+                            {otherLeftMenuItems.map((item, idx) => (
+                                <Menu
+                                    key={item.labelId || idx}
+                                    vertical
+                                    gap="xs"
+                                    size={size}
+                                    variant={variant}
+                                    menuItemComponent={BrandNavbarMenuItem}
+                                    items={[item]}
+                                />
+                            ))}
                             {dropdownMenuItems.map((item, idx) => (
                                 <Menu
                                     key={item.labelId || idx}
