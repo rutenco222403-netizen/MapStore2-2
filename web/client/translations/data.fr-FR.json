@@ -405,6 +405,25 @@
     "Rutas":{
       "statistics": "Données climatologiques"
     },
+    "Statistics": {
+      "title": "Surveillance des Capteurs",
+      "subtitle": "Données en temps réel du réseau de capteurs environnementaux",
+      "emptyTitle": "Aucune donnée disponible",
+      "emptyText": "L'API n'a renvoyé aucune station, aucun capteur ou aucune lecture pour la sélection actuelle.",
+      "periodLabel": "Période :",
+      "period.24h": "Dernières 24h",
+      "period.7d": "7 derniers jours",
+      "period.30d": "30 derniers jours",
+      "period.90d": "90 derniers jours",
+      "sensorInfo": "Capteur",
+      "noDataPeriod": "Aucune donnée pour cette période",
+      "min": "Min",
+      "avg": "Moy",
+      "max": "Max",
+      "sensorsLabel": "Capteurs :",
+      "zoneLabel": "Zone :",
+      "stationLabel": "Station :"
+    },
     "cookiesPolicyNotification": {
       "title": "Ce site utilise des cookies",
       "message": "En continuant sur notre site Web, vous acceptez l'utilisation de cookies.",

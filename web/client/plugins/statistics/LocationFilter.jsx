@@ -5,12 +5,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import Message from '../../components/I18N/Message';
 
 function LocationFilter({ zones, stations, zone, station, onZoneChange, onStationChange }) {
     return (
         <div className="sc-location-filter">
             <div className="sc-location-filter__group">
-                <label className="sc-location-filter__label" htmlFor="sc-zone">Zona:</label>
+                <label className="sc-location-filter__label" htmlFor="sc-zone">
+                    <Message msgId="Statistics.zoneLabel" defaultMessage="Zona:" />
+                </label>
                 <select
                     id="sc-zone"
                     className="sc-location-filter__select"
@@ -23,7 +26,9 @@ function LocationFilter({ zones, stations, zone, station, onZoneChange, onStatio
             </div>
 
             <div className="sc-location-filter__group">
-                <label className="sc-location-filter__label" htmlFor="sc-station">Estación:</label>
+                <label className="sc-location-filter__label" htmlFor="sc-station">
+                    <Message msgId="Statistics.stationLabel" defaultMessage="Estación:" />
+                </label>
                 <select
                     id="sc-station"
                     className="sc-location-filter__select"

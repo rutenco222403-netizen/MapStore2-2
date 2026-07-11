@@ -5,18 +5,21 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import Message from '../../components/I18N/Message';
 
 export const PERIODS = [
-    { value: '24h', label: 'Últimas 24h' },
-    { value: '7d',  label: 'Últimos 7 días' },
-    { value: '30d', label: 'Últimos 30 días' },
-    { value: '90d', label: 'Últimos 90 días' }
+    { value: '24h', labelId: 'Statistics.period.24h', defaultMessage: 'Últimas 24h' },
+    { value: '7d',  labelId: 'Statistics.period.7d', defaultMessage: 'Últimos 7 días' },
+    { value: '30d', labelId: 'Statistics.period.30d', defaultMessage: 'Últimos 30 días' },
+    { value: '90d', labelId: 'Statistics.period.90d', defaultMessage: 'Últimos 90 días' }
 ];
 
 function PeriodFilter({ value, onChange }) {
     return (
         <div className="sc-period-filter">
-            <span className="sc-period-filter__label">Período:</span>
+            <span className="sc-period-filter__label">
+                <Message msgId="Statistics.periodLabel" defaultMessage="Período:" />
+            </span>
             <div className="sc-period-filter__buttons">
                 {PERIODS.map(p => (
                     <button
@@ -25,7 +28,7 @@ function PeriodFilter({ value, onChange }) {
                         onClick={() => onChange(p.value)}
                         type="button"
                     >
-                        {p.label}
+                        <Message msgId={p.labelId} defaultMessage={p.defaultMessage} />
                     </button>
                 ))}
             </div>
