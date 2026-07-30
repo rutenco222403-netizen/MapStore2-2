@@ -322,41 +322,150 @@
     }
 }
 
-
-// ── Wrapper del Page container ───────────────────────────────────────
-#page-statistics {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-
-  // El BrandNavbar ya ocupa su espacio al principio (position fijo o sticky).
-  // El plugin Statistics (contenido) debe crecer para empujar el footer.
-  .ms-statistics-page {
-    flex: 1 1 auto;
-  }
-
-  // El footer va al final
-  .ms-footer-custom {
-    flex-shrink: 0;
-    margin-top: auto;
-  }
+// ── Responsive ────────────────────────────────────────────────────────
+@media (max-width: 1279px) {
+    .sc-dashboard {
+        &__grid {
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        }
+    }
 }
 
-// ── Contenido de la página Statistics ────────────────────────────────
-.ms-statistics-page {
-  padding: 100px 40px 40px 40px;   // 100px arriba para no quedar bajo el navbar
-  min-height: 60vh;
-  box-sizing: border-box;
+@media (max-width: 991px) {
+    .ms-statistics-page {
+        padding-top: 76px;
+    }
 
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #0C5ECA;
-  }
+    .sc-dashboard {
+        padding: 24px 16px 32px;
 
-  p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #333;
-  }
+        &__toolbar {
+            align-items: stretch;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        &__grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+
+    .sc-card {
+        padding: 16px;
+    }
+
+    .sc-period-filter,
+    .sc-location-filter,
+    .sc-sensor-selector {
+        width: 100%;
+    }
+
+    .sc-period-filter {
+        align-items: flex-start;
+        flex-direction: column;
+
+        &__buttons {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+    }
+
+    .sc-location-filter {
+        &__group {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        &__select {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+    }
+
+    .sc-sensor-selector {
+        align-items: flex-start;
+        flex-direction: column;
+
+        &__chips {
+            width: 100%;
+        }
+    }
+
+    .sc-chip {
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .sc-stats {
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .sc-dashboard {
+        padding: 20px 12px 28px;
+
+        &__title {
+            font-size: 1.35rem;
+            line-height: 1.25;
+        }
+
+        &__subtitle {
+            font-size: 0.85rem;
+        }
+    }
+
+    .sc-card {
+        padding: 14px;
+
+        &__header {
+            gap: 10px;
+        }
+
+        &__title {
+            font-size: 0.9rem;
+        }
+
+        &__subtitle {
+            font-size: 0.75rem;
+        }
+    }
+
+    .sc-period-filter {
+        &__buttons {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        &__btn {
+            width: 100%;
+            text-align: center;
+            padding: 6px 10px;
+        }
+    }
+
+    .sc-location-filter {
+        &__group {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        &__select {
+            width: 100%;
+        }
+    }
+
+    .sc-stats {
+        flex-wrap: wrap;
+
+        &__item {
+            min-width: calc(33.333% - 8px);
+        }
+    }
 }
