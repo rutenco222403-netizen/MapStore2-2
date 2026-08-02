@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -57,8 +56,8 @@ import it.geosolutions.mapstore.utils.ResourceUtils;
 @Controller
 public class UploadPluginController extends BaseMapStoreController {
 
-	private ObjectMapper jsonMapper = new ObjectMapper();
-	private JsonNodeFactory jsonNodeFactory = new JsonNodeFactory(false);
+	private final ObjectMapper jsonMapper = new ObjectMapper();
+	private final JsonNodeFactory jsonNodeFactory = new JsonNodeFactory(false);
 
 	@Autowired
 	ServletContext context;
@@ -76,49 +75,49 @@ public class UploadPluginController extends BaseMapStoreController {
 	@Secured({ "ROLE_ADMIN" })
 	@RequestMapping(value = "/uploadPlugin", method = RequestMethod.POST, headers = "Accept=application/json")
 	public @ResponseBody String uploadPlugin(InputStream dataStream) throws IOException {
-		ZipInputStream zip = new ZipInputStream(dataStream);
-		ZipEntry entry = zip.getNextEntry();
 		String pluginName = null;
-		;
 		String bundleName = null;
-		Map<File, String> tempFiles = new HashMap<File, String>();
+		Map<File, String> tempFiles = new HashMap<>();
 		JsonNode plugin = null;
 		boolean addTranslations = false;
-		while (entry != null) {
-			if (!entry.isDirectory()) {
-				if (entry.getName().toLowerCase().endsWith("index.js")) {
-					bundleName = entry.getName();
-					File tempBundle = File.createTempFile("mapstore-bundle", ".js");
-					storeAsset(zip, tempBundle);
-					tempFiles.put(tempBundle, "js");
-				}
-				if ("index.json".equals(entry.getName().toLowerCase())) {
-					JsonNode json = readJSON(zip);
-					JsonNode plugins = json.get("plugins");
-					// TODO: add support for many plugins in one single extension
-					plugin = plugins.get(0);
-					((ObjectNode) plugin).put("extension", true);
-					pluginName = plugin.get("name").asText();
-					if (shouldStorePluginsConfigAsPatch()) {
-						addPluginConfigurationAsPatch(plugin);
-					} else {
-						addPluginConfiguration(plugin);
+		try (ZipInputStream zip = new ZipInputStream(dataStream)) {
+			ZipEntry entry = zip.getNextEntry();
+			while (entry != null) {
+				if (!entry.isDirectory()) {
+					if (entry.getName().toLowerCase().endsWith("index.js")) {
+						bundleName = entry.getName();
+						File tempBundle = File.createTempFile("mapstore-bundle", ".js");
+						storeAsset(zip, tempBundle);
+						tempFiles.put(tempBundle, "js");
+					}
+					if ("index.json".equals(entry.getName().toLowerCase())) {
+						JsonNode json = readJSON(zip);
+						JsonNode plugins = json.get("plugins");
+						// TODO: add support for many plugins in one single extension
+						plugin = plugins.get(0);
+						((ObjectNode) plugin).put("extension", true);
+						pluginName = plugin.get("name").asText();
+						if (shouldStorePluginsConfigAsPatch()) {
+							addPluginConfigurationAsPatch(plugin);
+						} else {
+							addPluginConfiguration(plugin);
+						}
+					}
+					if (entry.getName().toLowerCase().startsWith("translations/")) {
+						File tempAsset = File.createTempFile("mapstore-asset-translations", ".json");
+						storeAsset(zip, tempAsset);
+						tempFiles.put(tempAsset, "asset/" + entry.getName());
+						addTranslations = true;
+					}
+					// all files inside assets directory must be added to assets
+					if (entry.getName().toLowerCase().startsWith("assets/")) {
+						File tempAsset = File.createTempFile(entry.getName(), ".tmp");
+						storeAsset(zip, tempAsset);
+						tempFiles.put(tempAsset, "asset/" + entry.getName());
 					}
 				}
-				if (entry.getName().toLowerCase().startsWith("translations/")) {
-					File tempAsset = File.createTempFile("mapstore-asset-translations", ".json");
-					storeAsset(zip, tempAsset);
-					tempFiles.put(tempAsset, "asset/" + entry.getName());
-					addTranslations = true;
-				}
-				// all files inside assets directory must be added to assets
-				if (entry.getName().toLowerCase().startsWith("assets/")) {
-					File tempAsset = File.createTempFile(entry.getName(), ".tmp");
-					storeAsset(zip, tempAsset);
-					tempFiles.put(tempAsset, "asset/" + entry.getName());
-				}
+				entry = zip.getNextEntry();
 			}
-			entry = zip.getNextEntry();
 		}
 		String pluginBundle = pluginName + "/" + bundleName;
 		String translations = addTranslations ? pluginName + "/translations" : null;
@@ -135,7 +134,6 @@ public class UploadPluginController extends BaseMapStoreController {
 			}
 		}
 
-		zip.close();
 		if (plugin == null) {
 			throw new IOException("Invalid bundle: index.json missing");
 		}
@@ -148,12 +146,8 @@ public class UploadPluginController extends BaseMapStoreController {
 	}
 
 	private boolean canUseDataDir() {
-		return getDataDir().isEmpty() ? false : Stream.of(getDataDir().split(",")).filter(new Predicate<String>() {
-			@Override
-			public boolean test(String folder) {
-				return !folder.trim().isEmpty() && new File(folder).exists();
-			}
-		}).count() > 0;
+		return !getDataDir().isEmpty() && Stream.of(getDataDir().split(","))
+				.anyMatch(folder -> !folder.trim().isEmpty() && new File(folder).exists());
 
 	}
 
@@ -270,16 +264,12 @@ public class UploadPluginController extends BaseMapStoreController {
     }
 
     private String getWriteStorage() {
-		return getDataDir().isEmpty() ? "" : Stream.of(getDataDir().split(",")).filter(new Predicate<String>() {
-			@Override
-			public boolean test(String folder) {
-				return !folder.trim().isEmpty();
-			}
-		}).findFirst().orElse("");
+		return getDataDir().isEmpty() ? "" : Stream.of(getDataDir().split(","))
+				.filter(folder -> !folder.trim().isEmpty()).findFirst().orElse("");
 	}
 
 	private void addPluginConfiguration(JsonNode json) throws IOException {
-		ObjectNode config = null;
+		ObjectNode config;
 		Optional<File> pluginsConfigFile = findResource(getPluginsConfigPath());
 		if (pluginsConfigFile.isPresent()) {
 			try (FileInputStream input = new FileInputStream(pluginsConfigFile.get())) {
@@ -310,7 +300,7 @@ public class UploadPluginController extends BaseMapStoreController {
 	}
 
 	private void addPluginConfigurationAsPatch(JsonNode json) throws IOException {
-		ArrayNode config = null;
+		ArrayNode config;
 		String configPath = getPluginsConfigPatchFilePath();
 		Optional<File> pluginsConfigFile = findResource(configPath);
 
@@ -372,7 +362,7 @@ public class UploadPluginController extends BaseMapStoreController {
 
 	private void addExtension(String pluginName, String pluginBundle, String translations)
 			throws FileNotFoundException, IOException {
-		ObjectNode config = null;
+		ObjectNode config;
 		Optional<File> extensionsConfigFile = findResource(getExtensionsConfigPath());
 		if (extensionsConfigFile.isPresent()) {
 			try (FileInputStream input = new FileInputStream(extensionsConfigFile.get())) {
@@ -411,7 +401,7 @@ public class UploadPluginController extends BaseMapStoreController {
 
 	private JsonNode readJSON(InputStream input) throws IOException {
 		byte[] buffer = new byte[1024];
-		int read = 0;
+		int read;
 		StringBuilder json = new StringBuilder();
 		while ((read = input.read(buffer, 0, 1024)) >= 0) {
 			json.append(new String(buffer, 0, read));
@@ -422,13 +412,14 @@ public class UploadPluginController extends BaseMapStoreController {
 	private void storeAsset(ZipInputStream zip, File file) throws FileNotFoundException, IOException {
 		try (FileOutputStream outFile = new FileOutputStream(file)) {
 			byte[] buffer = new byte[1024];
-			int read = 0;
+			int read;
 			while ((read = zip.read(buffer, 0, 1024)) >= 0) {
 				outFile.write(buffer, 0, read);
 			}
 		}
 	}
 
+	@Override
 	public void setContext(ServletContext context) {
 		this.context = context;
 	}

@@ -9,7 +9,6 @@ package it.geosolutions.mapstore.controllers.rest.config;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,13 +83,7 @@ public class LoadAssetsController extends BaseConfigController {
         IOUtils.copy(toStream(resource), response.getOutputStream());
     }
     protected boolean isAllowed(String resourceName) {
-        return Stream.of(allowedResources.split(",")).anyMatch(new Predicate<String>() {
-            @Override
-            public boolean test(String p) {
-                return p.equals(resourceName);
-            }
-
-        });
+        return Stream.of(allowedResources.split(",")).anyMatch(p -> p.equals(resourceName));
     }
 
 
