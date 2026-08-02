@@ -7,16 +7,15 @@
 */
 package it.geosolutions.mapstore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,6 +26,9 @@ import org.springframework.web.servlet.HandlerMapping;
 import it.geosolutions.mapstore.controllers.BaseConfigController.ResourceNotAllowedException;
 import it.geosolutions.mapstore.controllers.rest.config.LoadAssetsController;
 
+// LoadAssetsController is deprecated in favor of ConfigsController/ExtensionsController,
+// but this test class intentionally verifies the legacy controller's behavior.
+@SuppressWarnings("deprecation")
 public class LoadAssetControllerTest {
     LoadAssetsController controller;
 
@@ -120,7 +122,7 @@ public class LoadAssetControllerTest {
     	Exception found = null;
     	try {
     		controller.loadAsset(request, response);
-    	} catch(Exception e) {
+    	} catch(IOException e) {
     		found = e;
     	} finally {
     		tempResource.delete();

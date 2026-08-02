@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -56,6 +58,6 @@ public class TestUtils {
     }
 
     public static String getContent(File file) throws IOException {
-        return FileUtils.readFileToString(file);
+        return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
     }
 }

@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -138,12 +137,7 @@ public abstract class BaseConfigController extends BaseMapStoreController {
 
             try {
             	StringBuilder contentBuilder = new StringBuilder();
-                stream.forEach(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) {
-                        contentBuilder.append(s).append("\n"); // note: this adds a new line at the end of js files too.
-                    }
-                });
+                stream.forEach(s -> contentBuilder.append(s).append("\n")); // note: this adds a new line at the end of js files too.
                 resource.data = contentBuilder.toString();
             } catch (Exception e) {
             	// if can not read the file line by line(e.g. images) pass the file.
@@ -200,12 +194,7 @@ public abstract class BaseConfigController extends BaseMapStoreController {
 
     protected JsonNode readJsonConfig(Stream<String> stream) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
-        stream.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                contentBuilder.append(s).append("\n");
-            }
-        });
+        stream.forEach(s -> contentBuilder.append(s).append("\n"));
         String json = contentBuilder.toString();
         JsonNode jsonObject = jsonMapper.readTree(json);
         return jsonObject;

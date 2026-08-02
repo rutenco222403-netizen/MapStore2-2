@@ -10,24 +10,13 @@ import { createPlugin } from '../../utils/PluginsUtils';
 import { withResizeDetector } from 'react-resize-detector';
 import Message from '../../components/I18N/Message';
 
-// Importamos la función para obtener datos de Strapi
-// import { getHomeInfo } from '../../libs/strapi/get-home-info.js';
-
 // Importamos el gif
 import amanecerGif from '../../product/assets/img/amanecer.gif';
 import wrfGif from '../../product/assets/img/wrf.gif';
 
 function GlobeGif() {
 
-    // const [wrfGifUrl, setWrfGifUrl] = useState(null);
     const [dateTime, setDateTime] = useState(new Date());
-
-    /* useEffect(() => {
-        getHomeInfo().then(({ image }) => {
-            setWrfGifUrl(image);
-        });
-    }, []); */
-
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -63,22 +52,12 @@ function GlobeGif() {
                 </a>
                 <a href="#" target="_self" rel="noopener noreferrer">
                     <img
-                        src={wrfGif} // wrfGifUrl
+                        src={wrfGif}
                         alt="WRF Model GIF"
                         className="ms-wrf-gif"
                         style={{ cursor: 'pointer' }}
                     />
                 </a>
-                {/* {wrfGif && ( // wrfGifUrl
-                    <a href="#" target="_self" rel="noopener noreferrer">
-                        <img
-                            src={wrfGif} // wrfGifUrl
-                            alt="WRF Model GIF"
-                            className="ms-wrf-gif"
-                            style={{ cursor: 'pointer' }}
-                        />
-                    </a>
-                )} */}
             </div>
         </div>
     );
