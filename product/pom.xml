@@ -253,6 +253,9 @@
                 <configuration>
                     <packagingExcludes>
                         WEB-INF/lib/*spring*5.3.18*.jar,
+                        WEB-INF/lib/jackson-annotations-2.16.1.jar,
+                        WEB-INF/lib/jackson-core-2.16.1.jar,
+                        WEB-INF/lib/jackson-databind-2.16.1.jar,
                         WEB-INF/lib/json-lib-2.4-jdk15.jar,
                         WEB-INF/lib/msg-simple-1.1.jar,
                         WEB-INF/lib/btf-1.2.jar,
@@ -380,6 +383,10 @@
                             <artifactId>jackson-databind</artifactId>
                         </exclusion>
                         <exclusion>
+                            <groupId>com.fasterxml.jackson.dataformat</groupId>
+                            <artifactId>jackson-dataformat-yaml</artifactId>
+                        </exclusion>
+                        <exclusion>
                             <groupId>org.springframework</groupId>
                             <artifactId>spring-web</artifactId>
                         </exclusion>
@@ -397,6 +404,11 @@
                             <artifactId>httpcore</artifactId>
                         </exclusion>
                     </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.fasterxml.jackson.dataformat</groupId>
+                    <artifactId>jackson-dataformat-yaml</artifactId>
+                    <version>${jackson.version}</version>
                 </dependency>
             </dependencies>
         </profile>
