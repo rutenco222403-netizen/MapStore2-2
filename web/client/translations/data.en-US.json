@@ -422,7 +422,19 @@
       "max": "Max",
       "sensorsLabel": "Sensors:",
       "zoneLabel": "Zone:",
-      "stationLabel": "Station:"
+      "stationLabel": "Station:",
+      "sensor": {
+        "T1": "Soil Temperature 1",
+        "H1": "Soil Humidity 1",
+        "T2": "Soil Temperature 2",
+        "H2": "Soil Humidity 2",
+        "T3": "Soil Temperature 3",
+        "H3": "Soil Humidity 3",
+        "T4": "Air Temperature",
+        "H4": "Air Humidity",
+        "W1": "Wind Speed",
+        "R1": "Rainfall"
+      }
     },
     "cookiesPolicyNotification": {
       "title": "This website uses cookies",
