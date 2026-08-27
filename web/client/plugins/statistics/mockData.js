@@ -54,13 +54,36 @@ async function fetchJSONWithApiFallback(params = {}) {
 
 function normalizeZoneId(zone) {
     const value = String(zone || DEFAULT_ZONE).trim();
-    const numeric = value.match(/^(?:Z)?([1-4])$/i);
-    return numeric ? numeric[1] : value;
+    if (!value) return '';
+
+    const compact = value.replace(/\s+/g, '').toUpperCase();
+    const directMatch = compact.match(/^Z?(\d+[A-Z]?)$/i);
+    if (directMatch) {
+        return directMatch[1];
+    }
+
+    const numericMatch = compact.match(/(\d+[A-Z]?)/i);
+    if (numericMatch) {
+        return numericMatch[1];
+    }
+
+    return value;
 }
 
 function getPeriodDays(period) {
-    const match = String(period || '7d').match(/^(\d+)d$/i);
-    return match ? Number(match[1]) : 7;
+    const value = String(period || '7d').trim();
+
+    const hoursMatch = value.match(/^(\d+)h$/i);
+    if (hoursMatch) {
+        return Math.max(1, Math.ceil(Number(hoursMatch[1]) / 24));
+    }
+
+    const daysMatch = value.match(/^(\d+)d$/i);
+    if (daysMatch) {
+        return Number(daysMatch[1]);
+    }
+
+    return 7;
 }
 
 function extractArray(payload, preferredKeys = []) {
@@ -144,28 +167,45 @@ function normalizeReadingRow(row, sensorId, fallbackId) {
     };
 }
 
+function normalizeStationId(value) {
+    const raw = String(value ?? '').trim();
+    if (!raw) return '';
+
+    const compact = raw.replace(/\s+/g, '').toUpperCase();
+    if (/^E\d+$/.test(compact)) {
+        return compact;
+    }
+
+    const explicitMatch = compact.match(/E?(\d+)/i);
+    if (explicitMatch) {
+        return `E${explicitMatch[1]}`;
+    }
+
+    return raw;
+}
+
 function normalizeZoneItem(zone, fallbackId) {
     if (!zone || typeof zone !== 'object') return null;
-    const id = String(pickFirstDefined(zone, ['id_zona', 'zona_id', 'zonaId', 'id', 'zone_id']) || fallbackId || '').trim();
+    const rawId = pickFirstDefined(zone, ['id_zona', 'zona_id', 'zonaId', 'id', 'zone_id', 'codigo', 'cod_zona', 'numZona']) || fallbackId || '';
+    const id = normalizeZoneId(rawId);
     if (!id) return null;
     return {
-        id: normalizeZoneId(id),
-        name: pickFirstDefined(zone, ['nombre', 'name', 'zona_nombre']) || normalizeZoneId(id)
+        id,
+        name: pickFirstDefined(zone, ['nombre', 'name', 'zona_nombre', 'label']) || id
     };
 }
 
 function normalizeStationItem(station, fallbackId) {
     if (!station || typeof station !== 'object') return null;
-    const stationName = String(pickFirstDefined(station, ['nombre', 'estacion', 'id_estacion_nombre', 'station']) || '').trim();
-    const id = String(
-        (stationName && /^E\d+$/i.test(stationName) ? stationName : pickFirstDefined(station, ['id_estacion_nombre', 'estacion', 'station', 'stationId', 'id_estacion', 'id']))
-            || fallbackId
-            || ''
-    ).trim();
+
+    const stationName = String(pickFirstDefined(station, ['nombre', 'estacion', 'id_estacion_nombre', 'station', 'label']) || '').trim();
+    const rawId = pickFirstDefined(station, ['id_estacion', 'id_estacion_nombre', 'estacion', 'stationId', 'station', 'id']) || fallbackId || '';
+    const id = normalizeStationId(stationName || rawId);
+
     if (!id) return null;
     return {
         id,
-        name: pickFirstDefined(station, ['descripcion', 'name', 'estacion_nombre']) || id
+        name: pickFirstDefined(station, ['descripcion', 'name', 'estacion_nombre', 'label']) || stationName || id
     };
 }
 
@@ -231,8 +271,34 @@ export const SENSORS = [
     { id: 'R1', name: 'Lluvia', unit: 'mm', color: '#0ea5e9' }
 ];
 
-function extractSensorIdsFromRows(rows = []) {
-    const knownSensorIds = new Set(SENSORS.map(sensor => sensor.id));
+// ── Variables medidas por cada grupo de estaciones ────────────────────
+// Cada zona mide solo un subconjunto de sensores; esta lista se usa para
+// restringir lo que puede mostrarse aunque la API devuelva ruido en otras
+// columnas. Claves = id_zona normalizado (ver normalizeZoneId).
+const SOIL_SENSOR_IDS = ['T1', 'H1', 'T2', 'H2', 'T3', 'H3'];
+const AIR_SENSOR_IDS = ['T4', 'H4', 'W1'];
+const RAIN_SENSOR_IDS = ['R1'];
+
+const ZONE_SENSOR_GROUPS = {
+    // Altavista: humedad y temperatura del suelo (x3) + lluvia
+    1: [...SOIL_SENSOR_IDS, ...RAIN_SENSOR_IDS],
+    // San Antonio de Prado: humedad y temperatura del suelo (x3) + lluvia
+    2: [...SOIL_SENSOR_IDS, ...RAIN_SENSOR_IDS],
+    // Universidad Minas: todas las variables (suelo aún sin instalar, pero se incluyen)
+    3: [...SOIL_SENSOR_IDS, ...AIR_SENSOR_IDS, ...RAIN_SENSOR_IDS],
+    // Guajira: temperatura y humedad del aire, viento y lluvia (sin sensores de suelo)
+    4: [...AIR_SENSOR_IDS, ...RAIN_SENSOR_IDS]
+};
+
+function getZoneSensorIds(zoneId) {
+    const normalized = String(zoneId ?? '').trim();
+    return ZONE_SENSOR_GROUPS[normalized] || null;
+}
+
+function extractSensorIdsFromRows(rows = [], allowedSensorIds = null) {
+    const knownSensorIds = new Set(
+        allowedSensorIds ? SENSORS.filter(sensor => allowedSensorIds.includes(sensor.id)).map(sensor => sensor.id) : SENSORS.map(sensor => sensor.id)
+    );
     const ids = new Set();
 
     rows.forEach(row => {
@@ -250,6 +316,7 @@ function extractSensorIdsFromRows(rows = []) {
 
     return [...ids];
 }
+
 
 // ── API: obtener zonas ───────────────────────────────────────────────
 export async function fetchZones() {
@@ -274,6 +341,13 @@ export async function fetchStations(zone = DEFAULT_ZONE) {
     }
 }
 
+// Ventana amplia usada solo para detectar qué sensores existen, sin depender
+// del período seleccionado en la UI. Sin este parámetro la API asume un
+// filtro por defecto muy restrictivo (equivalente a "solo hoy"), lo que hace
+// que estaciones con lecturas menos frecuentes (p. ej. Altavista, Universidad
+// Minas) aparezcan sin datos aunque sí tengan historial.
+const SENSOR_DISCOVERY_DAYS = 3650;
+
 // ── API: obtener lista de sensores ────────────────────────────────────
 export async function fetchSensors(options = {}) {
     const zoneId = normalizeZoneId(options.zone || DEFAULT_ZONE);
@@ -283,13 +357,15 @@ export async function fetchSensors(options = {}) {
             zona_id: zoneId,
             tipo: 'ultimas',
             estacion: stationId,
+            dias: SENSOR_DISCOVERY_DAYS,
             limite: 50,
             offset: 0,
             formato: 'json'
         });
 
         const rows = extractArray(response, ['datos']);
-        const sensorIds = extractSensorIdsFromRows(rows);
+        const allowedSensorIds = getZoneSensorIds(zoneId);
+        const sensorIds = extractSensorIdsFromRows(rows, allowedSensorIds);
 
         const sensors = SENSORS.filter(sensor => sensorIds.includes(sensor.id));
         return sensors;
