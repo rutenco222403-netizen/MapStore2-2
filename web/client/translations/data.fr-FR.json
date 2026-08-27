@@ -422,7 +422,19 @@
       "max": "Max",
       "sensorsLabel": "Capteurs :",
       "zoneLabel": "Zone :",
-      "stationLabel": "Station :"
+      "stationLabel": "Station :",
+      "sensor": {
+        "T1": "Température Sol 1",
+        "H1": "Humidité Sol 1",
+        "T2": "Température Sol 2",
+        "H2": "Humidité Sol 2",
+        "T3": "Température Sol 3",
+        "H3": "Humidité Sol 3",
+        "T4": "Température Air",
+        "H4": "Humidité Air",
+        "W1": "Vitesse du Vent",
+        "R1": "Pluie"
+      }
     },
     "cookiesPolicyNotification": {
       "title": "Ce site utilise des cookies",

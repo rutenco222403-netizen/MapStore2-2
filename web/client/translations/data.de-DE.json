@@ -460,7 +460,19 @@
       "max": "Max",
       "sensorsLabel": "Sensoren:",
       "zoneLabel": "Zone:",
-      "stationLabel": "Station:"
+      "stationLabel": "Station:",
+      "sensor": {
+        "T1": "Bodentemperatur 1",
+        "H1": "Bodenfeuchtigkeit 1",
+        "T2": "Bodentemperatur 2",
+        "H2": "Bodenfeuchtigkeit 2",
+        "T3": "Bodentemperatur 3",
+        "H3": "Bodenfeuchtigkeit 3",
+        "T4": "Lufttemperatur",
+        "H4": "Luftfeuchtigkeit",
+        "W1": "Windgeschwindigkeit",
+        "R1": "Niederschlag"
+      }
     },
     "cookiesPolicyNotification": {
       "title": "Diese Webseite verwendet Cookies",

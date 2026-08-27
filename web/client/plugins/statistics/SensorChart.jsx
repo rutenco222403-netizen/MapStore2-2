@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
 import Message from '../../components/I18N/Message';
 import {
     ResponsiveContainer,
@@ -18,18 +19,39 @@ import {
 } from 'recharts';
 import { fetchReadings } from './mockData';
 
+// Períodos cortos (horas) muestran hora; períodos largos (días) muestran solo
+// la fecha, evitando que se amontonen fecha + hora en cada marca del eje X.
+const SHORT_PERIODS_WITH_TIME = new Set(['24h']);
+
+function getAxisTickFormat(period) {
+    return SHORT_PERIODS_WITH_TIME.has(period) ? 'HH:mm' : 'dd/MM';
+}
+
+function formatAxisTick(isoTimestamp, period) {
+    const date = new Date(isoTimestamp);
+    if (Number.isNaN(date.getTime())) return '';
+    return format(date, getAxisTickFormat(period));
+}
+
+function formatTooltipLabel(isoTimestamp) {
+    const date = new Date(isoTimestamp);
+    if (Number.isNaN(date.getTime())) return '';
+    return format(date, 'dd/MM/yyyy HH:mm');
+}
+
 // ── Tooltip personalizado (look shadcn) ───────────────────────────────
 function CustomTooltip({ active, payload, label, unit }) {
     if (!active || !payload || !payload.length) return null;
     return (
         <div className="sc-tooltip">
-            <p className="sc-tooltip__label">{label}</p>
+            <p className="sc-tooltip__label">{formatTooltipLabel(label)}</p>
             <p className="sc-tooltip__value">
                 {payload[0].value} <span className="sc-tooltip__unit">{unit}</span>
             </p>
         </div>
     );
 }
+
 
 CustomTooltip.propTypes = {
     active: PropTypes.bool,
@@ -79,17 +101,17 @@ function SensorChart({ sensor, period, zone, station }) {
             .finally(() => setLoading(false));
     }, [sensor.id, period, zone, station]);
 
-    const tickInterval = Math.max(1, Math.floor(data.length / 12));
+    const tickInterval = Math.max(1, Math.ceil(data.length / 8));
 
     if (!sensor) return null;
 
     return (
-        <div className="sc-card">
+        <div className="sc-card" style={{ '--sc-card-accent': sensor.color }}>
             {/* Cabecera */}
             <div className="sc-card__header">
                 <span className="sc-card__indicator" style={{ background: sensor.color }} />
                 <div>
-                    <h3 className="sc-card__title">{sensor.name}</h3>
+                    <h3 className="sc-card__title"><Message msgId={`Statistics.sensor.${sensor.id}`} defaultMessage={sensor.name} /></h3>
                     <p className="sc-card__subtitle">
                         <Message msgId="Statistics.sensorInfo" defaultMessage="Sensor" /> {sensor.id} · {sensor.unit}
                     </p>
@@ -109,11 +131,13 @@ function SensorChart({ sensor, period, zone, station }) {
                                 <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                                     <XAxis
-                                        dataKey="label"
+                                        dataKey="timestamp"
+                                        tickFormatter={value => formatAxisTick(value, period)}
                                         tick={{ fontSize: 10, fill: '#888' }}
                                         interval={tickInterval}
                                         tickLine={false}
                                         axisLine={{ stroke: '#e5e7eb' }}
+                                        minTickGap={24}
                                     />
                                     <YAxis
                                         tick={{ fontSize: 10, fill: '#888' }}

@@ -7,6 +7,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Message from '../../components/I18N/Message';
 
+function SensorLabel({ id, name }) {
+    return <Message msgId={`Statistics.sensor.${id}`} defaultMessage={name} />;
+}
+
+SensorLabel.propTypes = {
+    id: PropTypes.string,
+    name: PropTypes.string
+};
+
 function SensorSelector({ active, onChange, sensors }) {
     const list = sensors || [];
 
@@ -42,7 +51,7 @@ function SensorSelector({ active, onChange, sensors }) {
                             className="sc-chip__dot"
                             style={{ background: active.includes(s.id) ? s.color : '#d1d5db' }}
                         />
-                        {s.name}
+                        <SensorLabel id={s.id} name={s.name} />
                     </button>
                 ))}
             </div>
